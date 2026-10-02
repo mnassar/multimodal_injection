@@ -189,7 +189,7 @@ def display_image(image_tensor, unnorm):
 
 
 def train_image_entire(
-    input_ids, X, y, model, vision_tower, projector, epochs=100, lr=0.01
+    tokenizer, input_ids, X, y, model, vision_tower, projector, epochs=100, lr=0.01
 ):
     pbar = tqdm(range(epochs))
 
@@ -223,8 +223,8 @@ def train_image_entire(
             inputs_embeds = model.model.embed_tokens(cur_input_ids.unsqueeze(0))
             cur_input_embeds = inputs_embeds[0]
             num_patches = cur_image_features.shape[0]
-
-            image_start_tokens = torch.where(cur_input_ids == 32001)[0]
+            image_start_token_id = tokenizer.convert_tokens_to_ids("<im_start>")
+            image_start_tokens = torch.where(cur_input_ids == image_start_token_id)[0]
 
             image_start_token_pos = image_start_tokens.item()
             cur_image_features = image_features[0].to(device=cur_input_embeds.device)
@@ -260,7 +260,7 @@ def train_image_entire(
 
 
 def train_image_partial(
-    input_ids, X, y, model, vision_tower, projector, epochs=100, lr=0.01, rows=10
+    tokenizer, input_ids, X, y, model, vision_tower, projector, epochs=100, lr=0.01, rows=10
 ):
     pbar = tqdm(range(epochs))
 
@@ -299,8 +299,8 @@ def train_image_partial(
             inputs_embeds = model.model.embed_tokens(cur_input_ids.unsqueeze(0))
             cur_input_embeds = inputs_embeds[0]
             num_patches = cur_image_features.shape[0]
-
-            image_start_tokens = torch.where(cur_input_ids == 32001)[0]
+            image_start_token_id = tokenizer.convert_tokens_to_ids("<im_start>")
+            image_start_tokens = torch.where(cur_input_ids == image_start_token_id)[0]
 
             image_start_token_pos = image_start_tokens.item()
             cur_image_features = image_features[0].to(device=cur_input_embeds.device)
